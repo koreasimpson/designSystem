@@ -14,6 +14,10 @@ const config: StorybookConfig = {
   docs: {
     autodocs: 'tag',
   },
+  viteFinal: (config) => {
+    config.base = '/designSystem/';
+    return config;
+  },
 };
 
 export default config;
