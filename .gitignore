@@ -5,3 +5,5 @@ storybook-static/
 *.local
 .env
 .env.*
+.idea/
+.ai/
