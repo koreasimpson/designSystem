@@ -1,0 +1,65 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--fg-1);
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-2);
+  background: var(--bg-1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.root:not(.disabled):hover .dot {
+  border-color: var(--primary-500);
+}
+
+.checked {
+  border-color: var(--primary-500);
+}
+
+.inner {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--primary-500);
+}
+
+.label {
+  line-height: 1.4;
+}
+
+.group {
+  display: inline-flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.vertical {
+  flex-direction: column;
+}

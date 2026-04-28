@@ -1,0 +1,151 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    transform 100ms var(--ease-out);
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.root:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.root:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.root:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ----- Sizes ----- */
+.sm {
+  height: 36px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+.md {
+  height: 44px;
+  padding: 0 18px;
+  font-size: 15px;
+}
+
+.lg {
+  height: 52px;
+  padding: 0 22px;
+  font-size: 16px;
+}
+
+/* ----- Variants ----- */
+.primary {
+  background: var(--primary-500);
+  color: var(--fg-on-primary);
+  border-color: transparent;
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--primary-600);
+}
+
+.primary:active:not(:disabled) {
+  background: var(--primary-700);
+}
+
+.secondary {
+  background: var(--bg-1);
+  color: var(--fg-1);
+  border-color: var(--border-2);
+}
+
+.secondary:hover:not(:disabled) {
+  background: var(--bg-3);
+}
+
+.secondary:active:not(:disabled) {
+  background: var(--gray-200);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--fg-1);
+  border-color: transparent;
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--bg-3);
+}
+
+.ghost:active:not(:disabled) {
+  background: var(--gray-200);
+}
+
+.danger {
+  background: var(--bg-1);
+  color: var(--error);
+  border-color: #fca5a5;
+}
+
+.danger:hover:not(:disabled) {
+  background: var(--error-bg);
+}
+
+.danger:active:not(:disabled) {
+  background: #fee2e2;
+}
+
+/* ----- Modifiers ----- */
+.block {
+  width: 100%;
+}
+
+.circle,
+.square {
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.circle.sm,
+.square.sm {
+  width: 36px;
+}
+
+.circle.md,
+.square.md {
+  width: 44px;
+}
+
+.circle.lg,
+.square.lg {
+  width: 52px;
+}
+
+.circle {
+  border-radius: var(--radius-full);
+}
+
+.loading {
+  pointer-events: none;
+}
+
+/* ----- Icon slot ----- */
+.iconSlot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

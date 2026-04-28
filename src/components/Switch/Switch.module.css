@@ -1,0 +1,44 @@
+.root {
+  position: relative;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--border-2);
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--duration-base) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.root:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.on {
+  background: var(--primary-500);
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* sizes */
+.sm { width: 36px; height: 20px; }
+.md { width: 44px; height: 24px; }
+
+.knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(9, 9, 11, 0.18);
+  transition: left var(--duration-base) var(--ease-out);
+}
+
+.sm .knob { width: 16px; height: 16px; }
+.md .knob { width: 20px; height: 20px; }
+
+.sm .knobOn { left: calc(36px - 16px - 2px); }
+.md .knobOn { left: calc(44px - 20px - 2px); }

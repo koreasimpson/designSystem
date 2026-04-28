@@ -1,0 +1,8 @@
+@keyframes ks-spin {
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  display: inline-block;
+  animation: ks-spin 0.7s linear infinite;
+}

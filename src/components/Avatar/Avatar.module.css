@@ -1,0 +1,40 @@
+.img {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+}
+
+.fallback {
+  border-radius: 50%;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-latin);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.group {
+  display: inline-flex;
+}
+
+.groupItem {
+  border: 2px solid var(--bg-1);
+  border-radius: 50%;
+  display: inline-flex;
+}
+
+.rest {
+  background: var(--gray-100);
+  color: var(--fg-2);
+  border: 2px solid var(--bg-1);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-latin);
+  font-weight: 600;
+  flex-shrink: 0;
+}

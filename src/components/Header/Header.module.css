@@ -1,0 +1,81 @@
+.root {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid var(--border-1);
+}
+
+.inner {
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.brand:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.brandTitle {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 16px;
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.navItem {
+  height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-2);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.navItem:hover {
+  background: var(--bg-3);
+  color: var(--fg-1);
+}
+
+.navItem:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+.navActive {
+  background: var(--bg-3);
+  color: var(--fg-1);
+  font-weight: 600;
+}

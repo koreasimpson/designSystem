@@ -1,0 +1,40 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.track {
+  flex: 1;
+  background: var(--gray-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.bar {
+  border-radius: var(--radius-full);
+  transition: width 400ms var(--ease-out);
+}
+
+/* sizes */
+.sm { height: 4px; }
+.md { height: 6px; }
+.lg { height: 10px; }
+
+/* status colors */
+.status-default { background: var(--primary-500); }
+.status-success { background: var(--success); }
+.status-error   { background: var(--error); }
+.status-warning { background: var(--warning); }
+
+.info {
+  font-family: var(--font-latin);
+  font-size: 13px;
+  color: var(--fg-2);
+  min-width: 36px;
+  text-align: right;
+  display: inline-flex;
+  justify-content: flex-end;
+  align-items: center;
+}

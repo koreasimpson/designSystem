@@ -1,0 +1,40 @@
+.horizontal {
+  border: none;
+  border-top: 1px solid var(--border-1);
+  margin: 0;
+}
+
+.dashed {
+  border-style: dashed !important;
+}
+
+.vertical {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  background: var(--border-1);
+  margin: 0 12px;
+  vertical-align: middle;
+}
+
+.labeled {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.line {
+  height: 1px;
+  background: var(--border-1);
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.labelText {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--fg-3);
+  white-space: nowrap;
+}
