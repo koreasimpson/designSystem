@@ -1,5 +1,5 @@
 {
-  "name": "@koreasimpson/design-system",
+  "name": "@90chanho/design-system",
   "version": "0.2.0",
   "description": "코리안심슨 개인 디자인 시스템 — Marigold primary, Pretendard 본문, 토스 UX 라이팅 영향.",
   "type": "module",
@@ -20,6 +20,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup && cp src/styles/tokens.css dist/styles.css",
     "dev": "tsup --watch",
