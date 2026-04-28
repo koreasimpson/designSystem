@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<style>
+  .badge{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:8px;font-size:12px;font-weight:500;line-height:1}
+  .pill{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid var(--border-2);background:var(--bg-1)}
+  .dot{display:inline-block;width:6px;height:6px;border-radius:999px;margin-right:6px}
+</style>
+</head>
+<body><div class="card">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <span class="badge" style="background:#FFFBEB;color:#B45309">Marigold</span>
+    <span class="badge" style="background:#ECFDF5;color:#047857"><span class="dot" style="background:#10B981"></span>완료</span>
+    <span class="badge" style="background:#FEF2F2;color:#B91C1C"><span class="dot" style="background:#EF4444"></span>오류</span>
+    <span class="badge" style="background:#EEF2FF;color:#4338CA"><span class="dot" style="background:#6366F1"></span>안내</span>
+    <span class="badge" style="background:var(--gray-100);color:var(--fg-2)">초안</span>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <span class="pill">React</span>
+    <span class="pill">TypeScript</span>
+    <span class="pill">디자인 시스템</span>
+    <span class="pill" style="background:var(--gray-900);color:#fff;border-color:var(--gray-900)">선택됨</span>
+  </div>
+</div></body></html>

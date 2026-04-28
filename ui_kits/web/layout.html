@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Layout · 코리안심슨</title>
+  <link rel="stylesheet" href="../../colors_and_type.css">
+  <style>
+    body { margin: 0; background: var(--bg-2); }
+    main { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
+    h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
+    .lead { color: var(--fg-2); font-size: 15px; margin: 0 0 40px; }
+    section { margin-bottom: 56px; }
+    .stitle { font-size: 12px; color: var(--fg-3); letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 14px; font-weight: 600; }
+    .panel { background: var(--bg-1); border: 1px solid var(--border-1); border-radius: 12px; padding: 24px; }
+    /* Grid demo helpers */
+    .demo-col { background: var(--primary-50); border: 1px solid var(--primary-200); border-radius: 8px; padding: 12px; font-size: 13px; color: var(--primary-700); font-family: var(--font-mono); text-align: center; }
+    .demo-box { background: var(--gray-100); border: 1px solid var(--border-2); border-radius: 8px; padding: 10px 16px; font-size: 13px; color: var(--fg-2); }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+// Layout.jsx — Divider, Space, Grid, Flex, Splitter
+const LY = {
+  fg1: 'var(--fg-1)', fg2: 'var(--fg-2)', fg3: 'var(--fg-3)',
+  bg1: 'var(--bg-1)', bg2: 'var(--bg-2)',
+  border1: 'var(--border-1)',
+};
+
+// ---- Divider ----
+function Divider({ vertical, label, align='center', dashed }) {
+  const style = dashed
+    ? { borderStyle: 'dashed', borderColor: LY.border1 }
+    : { borderColor: LY.border1 };
+  if (vertical) return (
+    <div style={{ display: 'inline-block', width: 1, height: '1em', background: LY.border1, margin: '0 12px', verticalAlign: 'middle' }}/>
+  );
+  if (label) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '0' }}>
+        {align !== 'left' && <div style={{ flex: align === 'center' ? 1 : 'none', width: align === 'right' ? 24 : undefined, height: 1, background: LY.border1 }}/>}
+        <span style={{ fontSize: 12, color: LY.fg3, whiteSpace: 'nowrap' }}>{label}</span>
+        {align !== 'right' && <div style={{ flex: 1, height: 1, background: LY.border1 }}/>}
+      </div>
+    );
+  }
+  return <hr style={{ border: 'none', borderTop: `1px ${dashed ? 'dashed' : 'solid'} ${LY.border1}`, margin: '0' }}/>;
+}
+
+// ---- Space ----
+function Space({ children, direction='horizontal', size=8, wrap, align='center' }) {
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: direction === 'vertical' ? 'column' : 'row',
+      gap: typeof size === 'number' ? size : { xs: 4, sm: 8, md: 12, lg: 16, xl: 24 }[size] || 8,
+      flexWrap: wrap ? 'wrap' : 'nowrap',
+      alignItems: align,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+// ---- Grid ----
+function Row({ children, gutter=16, align='stretch', justify='flex-start' }) {
+  return (
+    <div style={{
+      display: 'flex', flexWrap: 'wrap',
+      margin: `0 -${gutter / 2}px`,
+      alignItems: align, justifyContent: justify,
+    }}>
+      {React.Children.map(children, child =>
+        child ? React.cloneElement(child, { _gutter: gutter }) : null
+      )}
+    </div>
+  );
+}
+function Col({ children, span=12, _gutter=16, offset=0, style }) {
+  const pct = (span / 12) * 100;
+  const offsetPct = (offset / 12) * 100;
+  return (
+    <div style={{
+      width: `${pct}%`, marginLeft: `${offsetPct}%`,
+      padding: `0 ${_gutter / 2}px`, boxSizing: 'border-box',
+      ...style,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+// ---- Flex ----
+function Flex({ children, gap=8, align='center', justify='flex-start', wrap, direction='row', style }) {
+  return (
+    <div style={{
+      display: 'flex', flexDirection: direction,
+      gap, alignItems: align, justifyContent: justify,
+      flexWrap: wrap ? 'wrap' : 'nowrap',
+      ...style,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+// ---- Splitter ----
+function Splitter({ left, right, initialSplit=50, min=20, max=80 }) {
+  const [split, setSplit] = React.useState(initialSplit);
+  const ref = React.useRef(null);
+  const dragging = React.useRef(false);
+
+  const onMouseDown = () => { dragging.current = true; };
+  React.useEffect(() => {
+    const onMove = (e) => {
+      if (!dragging.current || !ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const pct = Math.min(max, Math.max(min, (x / rect.width) * 100));
+      setSplit(pct);
+    };
+    const onUp = () => { dragging.current = false; };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
+  }, [min, max]);
+
+  return (
+    <div ref={ref} style={{ display: 'flex', width: '100%', height: '100%', userSelect: 'none' }}>
+      <div style={{ width: `${split}%`, overflow: 'auto', minWidth: 0 }}>{left}</div>
+      <div
+        onMouseDown={onMouseDown}
+        style={{
+          width: 4, flexShrink: 0, background: LY.border1, cursor: 'col-resize',
+          transition: 'background 150ms', position: 'relative',
+        }}
+        onMouseEnter={e => e.currentTarget.style.background = 'var(--primary-400)'}
+        onMouseLeave={e => e.currentTarget.style.background = LY.border1}
+      />
+      <div style={{ flex: 1, overflow: 'auto', minWidth: 0 }}>{right}</div>
+    </div>
+  );
+}
+
+Object.assign(window, { LDivider: Divider, LSpace: Space, LRow: Row, LCol: Col, LFlex: Flex, LSplitter: Splitter });
+
+</script>
+  <script type="text/babel">
+    function App() {
+      return (
+        <main>
+          <h1>Layout</h1>
+          <p className="lead">구조를 만드는 기본 도구들이에요. Divider, Space, Grid, Flex, Splitter.</p>
+
+          {/* ---- Divider ---- */}
+          <section>
+            <div className="stitle">Divider</div>
+            <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>기본 구분선</div>
+                <LDivider/>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>점선</div>
+                <LDivider dashed/>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>가운데 라벨</div>
+                <LDivider label="또는"/>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>왼쪽 라벨</div>
+                <LDivider label="프로젝트" align="left"/>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>수직 구분선</div>
+                <div style={{ display: 'flex', alignItems: 'center', fontSize: 14, color: 'var(--fg-2)' }}>
+                  <span>홈</span><LDivider vertical/><span>프로젝트</span><LDivider vertical/><span>글쓰기</span><LDivider vertical/><span>소개</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Space ---- */}
+          <section>
+            <div className="stitle">Space · 간격 컴포넌트</div>
+            <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 10 }}>가로 간격 · size=12</div>
+                <LSpace size={12}>
+                  <div className="demo-box">버튼 A</div>
+                  <div className="demo-box">버튼 B</div>
+                  <div className="demo-box">버튼 C</div>
+                </LSpace>
+              </div>
+              <LDivider dashed/>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 10 }}>세로 간격 · direction=vertical · size=10</div>
+                <LSpace direction="vertical" size={10}>
+                  <div className="demo-box">항목 A</div>
+                  <div className="demo-box">항목 B</div>
+                  <div className="demo-box">항목 C</div>
+                </LSpace>
+              </div>
+              <LDivider dashed/>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 10 }}>wrap 허용 · size=8</div>
+                <LSpace size={8} wrap>
+                  {['React','TypeScript','Next.js','Vite','Tailwind','Zustand','React Query','Vitest','Playwright'].map(t => (
+                    <div key={t} className="demo-box" style={{ whiteSpace: 'nowrap' }}>{t}</div>
+                  ))}
+                </LSpace>
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Grid ---- */}
+          <section>
+            <div className="stitle">Grid · 12 Column</div>
+            <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>span 6 + 6 (반반)</div>
+                <LRow gutter={16}>
+                  <LCol span={6}><div className="demo-col">6</div></LCol>
+                  <LCol span={6}><div className="demo-col">6</div></LCol>
+                </LRow>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>span 8 + 4</div>
+                <LRow gutter={16}>
+                  <LCol span={8}><div className="demo-col">8</div></LCol>
+                  <LCol span={4}><div className="demo-col">4</div></LCol>
+                </LRow>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>span 3 × 4</div>
+                <LRow gutter={16}>
+                  <LCol span={3}><div className="demo-col">3</div></LCol>
+                  <LCol span={3}><div className="demo-col">3</div></LCol>
+                  <LCol span={3}><div className="demo-col">3</div></LCol>
+                  <LCol span={3}><div className="demo-col">3</div></LCol>
+                </LRow>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>offset: 2 + span 8</div>
+                <LRow gutter={16}>
+                  <LCol span={8} offset={2}><div className="demo-col">8 (offset 2)</div></LCol>
+                  <LCol span={2}><div className="demo-col">2</div></LCol>
+                </LRow>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 8 }}>실제 레이아웃 예시 — 사이드바 + 본문</div>
+                <LRow gutter={20}>
+                  <LCol span={3}>
+                    <div style={{ background: 'var(--bg-2)', border: '1px solid var(--border-1)', borderRadius: 10, padding: 14, fontSize: 13, color: 'var(--fg-2)', lineHeight: 2 }}>
+                      <div>홈</div><div>프로젝트</div><div>글쓰기</div><div>소개</div>
+                    </div>
+                  </LCol>
+                  <LCol span={9}>
+                    <div style={{ background: 'var(--bg-2)', border: '1px solid var(--border-1)', borderRadius: 10, padding: 18 }}>
+                      <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 8 }}>본문 영역</div>
+                      <div style={{ fontSize: 13, color: 'var(--fg-2)', lineHeight: 1.6 }}>한 화면에 하나의 핵심 액션. 나머지는 위계로 분리해요.</div>
+                    </div>
+                  </LCol>
+                </LRow>
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Flex ---- */}
+          <section>
+            <div className="stitle">Flex · 유연한 정렬</div>
+            <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              {[
+                { justify: 'flex-start', label: 'justify: flex-start' },
+                { justify: 'center', label: 'justify: center' },
+                { justify: 'flex-end', label: 'justify: flex-end' },
+                { justify: 'space-between', label: 'justify: space-between' },
+              ].map(({ justify, label }) => (
+                <div key={label}>
+                  <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 6 }}>{label}</div>
+                  <LFlex justify={justify} gap={10} style={{ background: 'var(--bg-2)', borderRadius: 8, padding: '10px 14px' }}>
+                    <div className="demo-box">A</div>
+                    <div className="demo-box">B</div>
+                    <div className="demo-box">C</div>
+                  </LFlex>
+                </div>
+              ))}
+              <LDivider dashed/>
+              <div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 6 }}>헤더 패턴 — space-between + align center</div>
+                <LFlex justify="space-between" align="center" style={{ background: 'var(--bg-2)', borderRadius: 10, padding: '12px 18px' }}>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>코리안심슨</div>
+                  <LFlex gap={8}>
+                    <div className="demo-box" style={{ fontSize: 12 }}>Projects</div>
+                    <div className="demo-box" style={{ fontSize: 12 }}>Writing</div>
+                    <div className="demo-box" style={{ fontSize: 12 }}>About</div>
+                  </LFlex>
+                </LFlex>
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Splitter ---- */}
+          <section>
+            <div className="stitle">Splitter · 드래그로 크기 조절</div>
+            <div style={{ height: 280, border: '1px solid var(--border-1)', borderRadius: 12, overflow: 'hidden' }}>
+              <LSplitter
+                initialSplit={35}
+                left={
+                  <div style={{ height: '100%', padding: 20, background: 'var(--bg-2)', overflowY: 'auto' }}>
+                    <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 12, letterSpacing: '0.06em', textTransform: 'uppercase' }}>파일 탐색기</div>
+                    {['Button.tsx','Card.tsx','Icon.tsx','Typography.tsx','Divider.tsx','Space.tsx'].map(f => (
+                      <div key={f} style={{ fontSize: 13, padding: '7px 10px', borderRadius: 6, cursor: 'pointer', color: 'var(--fg-2)' }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'var(--gray-200)'}
+                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                        {f}
+                      </div>
+                    ))}
+                  </div>
+                }
+                right={
+                  <div style={{ height: '100%', padding: 20, fontFamily: 'var(--font-mono)', fontSize: 13, lineHeight: 1.7, color: 'var(--fg-2)', overflowY: 'auto' }}>
+                    <div style={{ color: 'var(--fg-3)', marginBottom: 8 }}>// Button.tsx</div>
+                    <div><span style={{ color: '#6366F1' }}>export</span> <span style={{ color: '#10B981' }}>function</span> <span style={{ color: 'var(--primary-600)' }}>Button</span>({'{'}</div>
+                    <div>&nbsp;&nbsp;<span style={{ color: 'var(--fg-3)' }}>variant</span> = <span style={{ color: '#10B981' }}>'primary'</span>,</div>
+                    <div>&nbsp;&nbsp;<span style={{ color: 'var(--fg-3)' }}>size</span> = <span style={{ color: '#10B981' }}>'md'</span>,</div>
+                    <div>&nbsp;&nbsp;<span style={{ color: 'var(--fg-3)' }}>children</span>,</div>
+                    <div>{'}'}) {'{'}</div>
+                    <div>&nbsp;&nbsp;<span style={{ color: '#6366F1' }}>return</span> &lt;<span style={{ color: '#EF4444' }}>button</span>&gt;...&lt;/<span style={{ color: '#EF4444' }}>button</span>&gt;;</div>
+                    <div>{'}'}</div>
+                  </div>
+                }
+              />
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 10 }}>
+              가운데 구분선을 드래그해서 크기를 조절할 수 있어요 (20%~80%).
+            </div>
+          </section>
+        </main>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>

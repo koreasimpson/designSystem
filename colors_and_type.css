@@ -1,0 +1,180 @@
+/* ============================================
+   코리안심슨 Design System — Tokens
+   ============================================ */
+
+/* ---------- Pretendard (local woff files) ---------- */
+@font-face { font-family: 'Pretendard'; font-style: normal; font-weight: 100; font-display: swap; src: url('fonts/Pretendard-Thin.woff') format('woff'); }
+@font-face { font-family: 'Pretendard'; font-style: normal; font-weight: 200; font-display: swap; src: url('fonts/Pretendard-ExtraLight.woff') format('woff'); }
+@font-face { font-family: 'Pretendard'; font-style: normal; font-weight: 300; font-display: swap; src: url('fonts/Pretendard-Light.woff') format('woff'); }
+@font-face { font-family: 'Pretendard'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/Pretendard-Regular.woff') format('woff'); }
+@font-face { font-family: 'Pretendard'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/Pretendard-Medium.woff') format('woff'); }
+@font-face { font-family: 'Pretendard'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/Pretendard-SemiBold.woff') format('woff'); }
+@font-face { font-family: 'Pretendard'; font-style: normal; font-weight: 700; font-display: swap; src: url('fonts/Pretendard-Bold.woff') format('woff'); }
+@font-face { font-family: 'Pretendard'; font-style: normal; font-weight: 800; font-display: swap; src: url('fonts/Pretendard-ExtraBold.woff') format('woff'); }
+@font-face { font-family: 'Pretendard'; font-style: normal; font-weight: 900; font-display: swap; src: url('fonts/Pretendard-Black.woff') format('woff'); }
+/* Inter — Latin/numbers (CDN) */
+@import url('https://rsms.me/inter/inter.css');
+/* Geist Mono — code (CDN) */
+@import url('https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/style.css');
+
+:root {
+  /* ---------- Color: Primary (Marigold) ---------- */
+  /* Warm amber — narratively ties to "Simpson" yellow, deliberately not Toss blue. */
+  --primary-50:  #FFFBEB;
+  --primary-100: #FEF3C7;
+  --primary-200: #FDE68A;
+  --primary-300: #FCD34D;
+  --primary-400: #FBBF24;
+  --primary-500: #F59E0B;  /* brand */
+  --primary-600: #D97706;
+  --primary-700: #B45309;
+  --primary-800: #92400E;
+  --primary-900: #78350F;
+
+  /* ---------- Color: Gray (11-step neutral) ---------- */
+  --gray-0:    #FFFFFF;
+  --gray-50:   #FAFAFA;
+  --gray-100:  #F4F4F5;
+  --gray-200:  #E4E4E7;
+  --gray-300:  #D4D4D8;
+  --gray-400:  #A1A1AA;
+  --gray-500:  #71717A;
+  --gray-600:  #52525B;
+  --gray-700:  #3F3F46;
+  --gray-800:  #27272A;
+  --gray-900:  #18181B;
+  --gray-950:  #09090B;
+
+  /* ---------- Color: Semantic ---------- */
+  --success: #10B981;  /* emerald 500 */
+  --warning: #F59E0B;  /* shares with brand — context distinguishes */
+  --error:   #EF4444;  /* red 500 */
+  --info:    #6366F1;  /* indigo 500 */
+
+  --success-bg: #ECFDF5;
+  --warning-bg: #FFFBEB;
+  --error-bg:   #FEF2F2;
+  --info-bg:    #EEF2FF;
+
+  /* ---------- Foreground / Background semantic ---------- */
+  --fg-1: var(--gray-950);   /* primary text */
+  --fg-2: var(--gray-700);   /* secondary text */
+  --fg-3: var(--gray-500);   /* tertiary / captions */
+  --fg-4: var(--gray-400);   /* disabled / placeholder */
+  --fg-on-primary: #FFFFFF;
+
+  --bg-1: var(--gray-0);     /* page */
+  --bg-2: var(--gray-50);    /* surface */
+  --bg-3: var(--gray-100);   /* sunken / hover */
+
+  --border-1: var(--gray-200);
+  --border-2: var(--gray-300);
+  --border-strong: var(--gray-900);
+
+  /* ---------- Typography: Families ---------- */
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-latin: 'Inter', 'Pretendard', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'SF Mono', Menlo, monospace;
+
+  /* ---------- Typography: Scale (4 tiers) ---------- */
+  /* Display — hero / big numbers */
+  --display-size: 40px;
+  --display-line: 1.25;
+  --display-weight: 700;
+  --display-tracking: -0.02em;
+
+  /* Title — section / card headings */
+  --title-size: 22px;
+  --title-line: 1.45;
+  --title-weight: 600;
+  --title-tracking: -0.01em;
+
+  /* Body — default paragraph (Korean-priority leading) */
+  --body-size: 16px;
+  --body-line: 1.6;
+  --body-weight: 400;
+  --body-tracking: 0;
+
+  /* Caption — meta, helper, label */
+  --caption-size: 13px;
+  --caption-line: 1.5;
+  --caption-weight: 400;
+  --caption-tracking: 0;
+
+  /* ---------- Spacing (4px base) ---------- */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ---------- Radii ---------- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  /* ---------- Shadows (minimal — borders preferred) ---------- */
+  --shadow-1: 0 1px 2px rgba(9, 9, 11, 0.04);
+  --shadow-2: 0 4px 12px rgba(9, 9, 11, 0.06);
+  --shadow-focus: 0 0 0 3px rgba(245, 158, 11, 0.30);
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+}
+
+/* ============================================
+   Semantic element styles
+   ============================================ */
+html, body {
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  font-size: var(--body-size);
+  line-height: var(--body-line);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.display, h1.display {
+  font-size: var(--display-size);
+  line-height: var(--display-line);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+}
+
+.title, h2.title, h3.title {
+  font-size: var(--title-size);
+  line-height: var(--title-line);
+  font-weight: var(--title-weight);
+  letter-spacing: var(--title-tracking);
+}
+
+.body, p {
+  font-size: var(--body-size);
+  line-height: var(--body-line);
+  font-weight: var(--body-weight);
+}
+
+.caption, small {
+  font-size: var(--caption-size);
+  line-height: var(--caption-line);
+  color: var(--fg-3);
+}
+
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.93em;
+}
+
+.numeric {
+  font-family: var(--font-latin);
+  font-feature-settings: 'tnum' 1, 'cv11' 1;
+}

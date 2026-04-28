@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feedback · 코리안심슨</title>
+  <link rel="stylesheet" href="../../colors_and_type.css">
+  <style>
+    body { margin: 0; background: var(--bg-2); }
+    main { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
+    h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
+    .lead { color: var(--fg-2); font-size: 15px; margin: 0 0 40px; }
+    section { margin-bottom: 56px; }
+    .stitle { font-size: 12px; color: var(--fg-3); letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 14px; font-weight: 600; }
+    .panel { background: var(--bg-1); border: 1px solid var(--border-1); border-radius: 12px; padding: 24px; }
+    .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .btn { height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--border-2); background: var(--bg-1); color: var(--fg-1); font-family: var(--font-sans); font-size: 14px; font-weight: 500; cursor: pointer; transition: background 150ms; }
+    .btn:hover { background: var(--gray-100); }
+    .btn-primary { background: var(--primary-500); color: #fff; border-color: transparent; }
+    .btn-primary:hover { background: var(--primary-600); }
+    .btn-danger { color: #EF4444; border-color: #FCA5A5; }
+    .btn-danger:hover { background: #FEF2F2; }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+// Feedback.jsx — Modal, Drawer, Alert, Message, Notification, Progress, Skeleton, Result, Spin
+const FB = {
+  primary: 'var(--primary-500)', primary600: 'var(--primary-600)', primary50: 'var(--primary-50)',
+  fg1: 'var(--fg-1)', fg2: 'var(--fg-2)', fg3: 'var(--fg-3)',
+  bg1: 'var(--bg-1)', bg2: 'var(--bg-2)',
+  border1: 'var(--border-1)',
+};
+
+// ---------- Spin ----------
+function Spin({ size=24, color }) {
+  const c = color || FB.primary;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={{ animation: 'fb-spin 0.7s linear infinite', display: 'inline-block' }}>
+      <style>{`@keyframes fb-spin { to { transform: rotate(360deg) } }`}</style>
+      <circle cx="12" cy="12" r="9" fill="none" stroke={c} strokeWidth="2.5" strokeDasharray="42" strokeDashoffset="14" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+// ---------- Skeleton ----------
+function Skeleton({ width='100%', height=16, radius=6, animate=true }) {
+  return (
+    <div style={{
+      width, height, borderRadius: radius,
+      background: 'linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%)',
+      backgroundSize: '200% 100%',
+      animation: animate ? 'fb-shimmer 1.5s ease-in-out infinite' : 'none',
+    }}>
+      <style>{`@keyframes fb-shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }`}</style>
+    </div>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div style={{ border: `1px solid ${FB.border1}`, borderRadius: 12, padding: 18, background: FB.bg1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 4 }}>
+        <Skeleton width={40} height={40} radius={999}/>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <Skeleton width="60%" height={14}/>
+          <Skeleton width="40%" height={12}/>
+        </div>
+      </div>
+      <Skeleton width="100%" height={12}/>
+      <Skeleton width="90%" height={12}/>
+      <Skeleton width="70%" height={12}/>
+    </div>
+  );
+}
+
+// ---------- Progress ----------
+function Progress({ value=0, status, size='md', showInfo=true }) {
+  const colors = { default: FB.primary, success: '#10B981', error: '#EF4444', warning: '#F59E0B' };
+  const color = colors[status] || colors.default;
+  const h = size === 'sm' ? 4 : size === 'lg' ? 10 : 6;
+  return (
+    <div style={{ width: '100%' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ flex: 1, background: 'var(--gray-100)', borderRadius: 999, overflow: 'hidden', height: h }}>
+          <div style={{ width: `${Math.min(100, Math.max(0, value))}%`, height: '100%', background: color, borderRadius: 999, transition: 'width 400ms cubic-bezier(.22,1,.36,1)' }}/>
+        </div>
+        {showInfo && (
+          <span style={{ fontFamily: 'Inter', fontSize: 12, color: FB.fg3, fontFeatureSettings: '"tnum" 1', minWidth: 32, textAlign: 'right' }}>
+            {status === 'success' ? '✓' : status === 'error' ? '✕' : `${value}%`}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CircleProgress({ value=0, size=72, status }) {
+  const colors = { default: FB.primary, success: '#10B981', error: '#EF4444' };
+  const color = colors[status] || colors.default;
+  const r = 28, c = 2 * Math.PI * r;
+  const offset = c - (value / 100) * c;
+  return (
+    <svg width={size} height={size} viewBox="0 0 72 72">
+      <circle cx="36" cy="36" r={r} fill="none" stroke="var(--gray-100)" strokeWidth="6"/>
+      <circle cx="36" cy="36" r={r} fill="none" stroke={color} strokeWidth="6"
+        strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round"
+        transform="rotate(-90 36 36)" style={{ transition: 'stroke-dashoffset 400ms cubic-bezier(.22,1,.36,1)' }}/>
+      <text x="36" y="41" textAnchor="middle" fontFamily="Inter" fontSize="13" fontWeight="700" fill={FB.fg1}>{value}%</text>
+    </svg>
+  );
+}
+
+// ---------- Alert ----------
+function Alert({ type='info', title, description, closable, onClose }) {
+  const [visible, setVisible] = React.useState(true);
+  if (!visible) return null;
+  const configs = {
+    success: { bg: '#ECFDF5', border: '#BBF7D0', icon: '#10B981', fg: '#047857', },
+    warning: { bg: '#FFFBEB', border: '#FDE68A', icon: '#F59E0B', fg: '#92400E' },
+    error:   { bg: '#FEF2F2', border: '#FECACA', icon: '#EF4444', fg: '#B91C1C' },
+    info:    { bg: '#EEF2FF', border: '#C7D2FE', icon: '#6366F1', fg: '#3730A3' },
+  };
+  const cfg = configs[type];
+  const icons = {
+    success: <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>,
+    warning: <><path d="m10.29 3.86-8.26 14.31A1 1 0 0 0 2.94 20h18.12a1 1 0 0 0 .87-1.5L13.73 4.14a1 1 0 0 0-1.74 0v-.28Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></>,
+    error:   <><circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/></>,
+    info:    <><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></>,
+  };
+  return (
+    <div style={{ background: cfg.bg, border: `1px solid ${cfg.border}`, borderRadius: 12, padding: '12px 16px', display: 'flex', gap: 10, alignItems: description ? 'flex-start' : 'center' }}>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={cfg.icon} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: description ? 1 : 0 }}>{icons[type]}</svg>
+      <div style={{ flex: 1 }}>
+        {title && <div style={{ fontSize: 14, fontWeight: 600, color: cfg.fg }}>{title}</div>}
+        {description && <div style={{ fontSize: 13, color: cfg.fg, marginTop: 2, lineHeight: 1.5, opacity: 0.85 }}>{description}</div>}
+      </div>
+      {closable && (
+        <button onClick={() => { setVisible(false); onClose?.(); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: cfg.fg, opacity: 0.6, display: 'flex', padding: 2 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ---------- Message (global toast-style) ----------
+function useMessage() {
+  const [msgs, setMsgs] = React.useState([]);
+  const show = (content, type='info', duration=2800) => {
+    const id = Date.now();
+    setMsgs(m => [...m, { id, content, type }]);
+    setTimeout(() => setMsgs(m => m.filter(x => x.id !== id)), duration);
+  };
+  const api = {
+    success: (c) => show(c, 'success'),
+    error: (c) => show(c, 'error'),
+    warning: (c) => show(c, 'warning'),
+    info: (c) => show(c, 'info'),
+    loading: (c) => show(c, 'loading'),
+  };
+  const colors = { success: '#10B981', error: '#EF4444', warning: '#F59E0B', info: '#6366F1', loading: FB.primary };
+  const MessageContainer = () => (
+    <div style={{ position: 'fixed', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, pointerEvents: 'none' }}>
+      {msgs.map(msg => (
+        <div key={msg.id} style={{
+          background: 'var(--gray-900)', color: '#fff', borderRadius: 10,
+          padding: '10px 16px', fontSize: 13, fontWeight: 500,
+          boxShadow: '0 4px 12px rgba(9,9,11,.15)',
+          display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
+          animation: 'fb-fadein 150ms ease-out',
+        }}>
+          <style>{`@keyframes fb-fadein { from { opacity:0; transform: translateY(-6px) } to { opacity:1; transform: none } }`}</style>
+          {msg.type === 'loading'
+            ? <Spin size={14} color="#fff"/>
+            : <span style={{ color: colors[msg.type], display: 'inline-flex' }}>●</span>}
+          {msg.content}
+        </div>
+      ))}
+    </div>
+  );
+  return [api, MessageContainer];
+}
+
+// ---------- Notification ----------
+function useNotification() {
+  const [notes, setNotes] = React.useState([]);
+  const show = (opts) => {
+    const id = Date.now();
+    setNotes(n => [...n, { id, ...opts }]);
+    setTimeout(() => setNotes(n => n.filter(x => x.id !== id)), opts.duration || 4000);
+  };
+  const close = (id) => setNotes(n => n.filter(x => x.id !== id));
+  const configs = { success: '#10B981', error: '#EF4444', warning: '#F59E0B', info: '#6366F1' };
+  const NotificationContainer = () => (
+    <div style={{ position: 'fixed', top: 16, right: 16, zIndex: 9999, display: 'flex', flexDirection: 'column', gap: 8, width: 320 }}>
+      {notes.map(n => (
+        <div key={n.id} style={{
+          background: FB.bg1, border: `1px solid ${FB.border1}`, borderRadius: 12, padding: 16,
+          boxShadow: '0 4px 12px rgba(9,9,11,.08)',
+          animation: 'fb-slidein 200ms cubic-bezier(.22,1,.36,1)',
+        }}>
+          <style>{`@keyframes fb-slidein { from { opacity:0; transform: translateX(12px) } to { opacity:1; transform:none } }`}</style>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            {n.type && <span style={{ color: configs[n.type], marginTop: 1, fontSize: 16 }}>●</span>}
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: FB.fg1 }}>{n.title}</div>
+              {n.description && <div style={{ fontSize: 13, color: FB.fg2, marginTop: 4, lineHeight: 1.5 }}>{n.description}</div>}
+            </div>
+            <button onClick={() => close(n.id)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: FB.fg3, display: 'flex', padding: 2 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  return [show, NotificationContainer];
+}
+
+// ---------- Modal ----------
+function Modal({ open, onClose, title, children, footer, width=480, danger }) {
+  if (!open) return null;
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 1000,
+      background: 'rgba(9,9,11,0.45)', backdropFilter: 'blur(4px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }} onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+      <div style={{
+        background: FB.bg1, borderRadius: 16, width, maxWidth: 'calc(100vw - 32px)',
+        boxShadow: '0 8px 32px rgba(9,9,11,.12)',
+        animation: 'fb-scalein 200ms cubic-bezier(.22,1,.36,1)',
+      }}>
+        <style>{`@keyframes fb-scalein { from { opacity:0; transform:scale(.96) } to { opacity:1; transform:none } }`}</style>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px', borderBottom: `1px solid ${FB.border1}` }}>
+          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em', color: danger ? '#EF4444' : FB.fg1 }}>{title}</div>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: FB.fg3, display: 'flex' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+        <div style={{ padding: 20, fontSize: 14, lineHeight: 1.6, color: FB.fg2 }}>{children}</div>
+        {footer && <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, padding: '14px 20px', borderTop: `1px solid ${FB.border1}` }}>{footer}</div>}
+      </div>
+    </div>
+  );
+}
+
+// ---------- Drawer ----------
+function Drawer({ open, onClose, title, children, placement='right', width=360 }) {
+  const placements = {
+    right:  { top: 0, right: 0, bottom: 0, width, transform: open ? 'none' : 'translateX(100%)' },
+    left:   { top: 0, left: 0, bottom: 0, width, transform: open ? 'none' : 'translateX(-100%)' },
+    bottom: { left: 0, right: 0, bottom: 0, height: 360, transform: open ? 'none' : 'translateY(100%)' },
+  };
+  return (
+    <>
+      {open && (
+        <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 999, background: 'rgba(9,9,11,0.35)', backdropFilter: 'blur(2px)', animation: 'fb-fadein 200ms' }}/>
+      )}
+      <div style={{
+        position: 'fixed', zIndex: 1000, background: FB.bg1,
+        boxShadow: '-4px 0 24px rgba(9,9,11,.08)',
+        transition: 'transform 300ms cubic-bezier(.22,1,.36,1)',
+        display: 'flex', flexDirection: 'column',
+        ...placements[placement],
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px', borderBottom: `1px solid ${FB.border1}` }}>
+          <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.01em' }}>{title}</div>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: FB.fg3, display: 'flex' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+        <div style={{ flex: 1, padding: 20, overflowY: 'auto', fontSize: 14, lineHeight: 1.6, color: FB.fg2 }}>{children}</div>
+      </div>
+    </>
+  );
+}
+
+// ---------- Result ----------
+function Result({ status='success', title, description, extra }) {
+  const configs = {
+    success: { icon: '#10B981', bg: '#ECFDF5', d: <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></> },
+    error:   { icon: '#EF4444', bg: '#FEF2F2', d: <><circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/></> },
+    warning: { icon: '#F59E0B', bg: '#FFFBEB', d: <><path d="m10.29 3.86-8.26 14.31A1 1 0 0 0 2.94 20h18.12a1 1 0 0 0 .87-1.5L13.73 4.14a1 1 0 0 0-1.74 0v-.28Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></> },
+    info:    { icon: '#6366F1', bg: '#EEF2FF', d: <><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></> },
+  };
+  const cfg = configs[status];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 24px', textAlign: 'center' }}>
+      <div style={{ width: 72, height: 72, borderRadius: '50%', background: cfg.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={cfg.icon} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">{cfg.d}</svg>
+      </div>
+      <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.01em', color: FB.fg1 }}>{title}</div>
+      {description && <div style={{ fontSize: 14, color: FB.fg2, marginTop: 8, maxWidth: 320, lineHeight: 1.6 }}>{description}</div>}
+      {extra && <div style={{ marginTop: 20, display: 'flex', gap: 8 }}>{extra}</div>}
+    </div>
+  );
+}
+
+Object.assign(window, {
+  FSpin: Spin, FSkeleton: Skeleton, FSkeletonCard: SkeletonCard,
+  FProgress: Progress, FCircleProgress: CircleProgress,
+  FAlert: Alert, FModal: Modal, FDrawer: Drawer, FResult: Result,
+  useMessage, useNotification,
+});
+
+</script>
+  <script type="text/babel">
+    function App() {
+      const [modal, setModal] = React.useState(null);
+      const [drawer, setDrawer] = React.useState(null);
+      const [progress, setProgress] = React.useState(42);
+      const [loading, setLoading] = React.useState(false);
+      const [msgApi, MessageContainer] = useMessage();
+      const [notify, NotificationContainer] = useNotification();
+
+      const simulateLoad = () => {
+        setLoading(true);
+        setTimeout(() => setLoading(false), 2000);
+      };
+
+      return (
+        <>
+          <MessageContainer/>
+          <NotificationContainer/>
+
+          <main>
+            <h1>Feedback</h1>
+            <p className="lead">사용자에게 상태, 진행, 결과를 알려주는 컴포넌트들이에요.</p>
+
+            {/* Spin */}
+            <section>
+              <div className="stitle">Spin · 로딩 인디케이터</div>
+              <div className="panel">
+                <div className="row" style={{ gap: 28 }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <FSpin size={16}/>
+                    <div style={{ fontSize: 11, color: 'var(--fg-3)', marginTop: 8 }}>xs · 16</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <FSpin size={24}/>
+                    <div style={{ fontSize: 11, color: 'var(--fg-3)', marginTop: 8 }}>sm · 24</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <FSpin size={36}/>
+                    <div style={{ fontSize: 11, color: 'var(--fg-3)', marginTop: 8 }}>md · 36</div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <FSpin size={48}/>
+                    <div style={{ fontSize: 11, color: 'var(--fg-3)', marginTop: 8 }}>lg · 48</div>
+                  </div>
+                  <div style={{ width: 1, height: 48, background: 'var(--border-1)' }}/>
+                  <div style={{ padding: 24, background: 'var(--bg-2)', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, minWidth: 160 }}>
+                    {loading
+                      ? <><FSpin size={28}/><span style={{ fontSize: 13, color: 'var(--fg-3)' }}>불러오는 중…</span></>
+                      : <><div style={{ fontSize: 14, color: 'var(--fg-2)' }}>데이터 로드됨</div><button className="btn" onClick={simulateLoad}>다시 불러오기</button></>}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Skeleton */}
+            <section>
+              <div className="stitle">Skeleton · 로딩 자리표시자</div>
+              <div className="grid-2">
+                <div>
+                  <FSkeletonCard/>
+                </div>
+                <div style={{ border: '1px solid var(--border-1)', borderRadius: 12, padding: 18, background: 'var(--bg-1)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                    <FSkeleton width={36} height={36} radius={999}/>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <FSkeleton width="55%" height={13}/>
+                      <FSkeleton width="35%" height={11}/>
+                    </div>
+                  </div>
+                  <FSkeleton width="100%" height={120} radius={8}/>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <FSkeleton width={60} height={24} radius={999}/>
+                    <FSkeleton width={60} height={24} radius={999}/>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Progress */}
+            <section>
+              <div className="stitle">Progress · 진행률</div>
+              <div className="panel">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24 }}>
+                  <div>
+                    <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 6 }}>기본 · {progress}%</div>
+                    <FProgress value={progress}/>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 6 }}>완료</div>
+                    <FProgress value={100} status="success"/>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 6 }}>오류</div>
+                    <FProgress value={63} status="error"/>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 6 }}>작게</div>
+                    <FProgress value={progress} size="sm"/>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 12, color: 'var(--fg-3)', marginBottom: 6 }}>크게</div>
+                    <FProgress value={progress} size="lg"/>
+                  </div>
+                </div>
+                <div className="row" style={{ gap: 8, marginBottom: 16 }}>
+                  <button className="btn" onClick={() => setProgress(p => Math.max(0, p - 10))}>−10</button>
+                  <button className="btn" onClick={() => setProgress(p => Math.min(100, p + 10))}>+10</button>
+                </div>
+                <div className="row" style={{ gap: 24 }}>
+                  <FCircleProgress value={progress}/>
+                  <FCircleProgress value={100} status="success"/>
+                  <FCircleProgress value={63} status="error"/>
+                </div>
+              </div>
+            </section>
+
+            {/* Alert */}
+            <section>
+              <div className="stitle">Alert · 인라인 알림</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <FAlert type="success" title="배포가 완료됐어요" description="main 브랜치가 Vercel에 정상적으로 배포됐어요." closable/>
+                <FAlert type="warning" title="점검이 예정돼 있어요" description="2026.05.01 02:00~04:00 사이 서비스가 일시 중단돼요." closable/>
+                <FAlert type="error" title="결제에 실패했어요" description="카드 한도를 초과했어요. 다른 결제수단을 사용해 주세요." closable/>
+                <FAlert type="info" title="새로운 기능이 생겼어요" closable/>
+              </div>
+            </section>
+
+            {/* Message */}
+            <section>
+              <div className="stitle">Message · 전역 토스트</div>
+              <div className="panel">
+                <div className="row">
+                  <button className="btn" onClick={() => msgApi.success('저장했어요')}>성공</button>
+                  <button className="btn" onClick={() => msgApi.error('다시 시도해 주세요')}>오류</button>
+                  <button className="btn" onClick={() => msgApi.warning('주의가 필요해요')}>경고</button>
+                  <button className="btn" onClick={() => msgApi.info('참고해 주세요')}>안내</button>
+                  <button className="btn" onClick={() => msgApi.loading('처리 중이에요…')}>로딩</button>
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 12 }}>버튼을 누르면 상단 중앙에 메시지가 떠요 · 2.8초 후 자동으로 사라져요</div>
+              </div>
+            </section>
+
+            {/* Notification */}
+            <section>
+              <div className="stitle">Notification · 우측 알림</div>
+              <div className="panel">
+                <div className="row">
+                  <button className="btn" onClick={() => notify({ type: 'success', title: '배포 완료', description: 'main 브랜치가 Vercel에 올라갔어요.' })}>성공 알림</button>
+                  <button className="btn" onClick={() => notify({ type: 'error', title: '결제 실패', description: '카드 한도를 확인해 주세요.' })}>오류 알림</button>
+                  <button className="btn" onClick={() => notify({ type: 'warning', title: '점검 예정', description: '내일 새벽 2시에 서비스가 잠깐 멈춰요.' })}>경고 알림</button>
+                  <button className="btn" onClick={() => notify({ type: 'info', title: '새 댓글이 달렸어요', description: '"왜 토스 블루를 피했을까" 글에 반응이 왔어요.' })}>정보 알림</button>
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--fg-3)', marginTop: 12 }}>버튼을 누르면 우측 상단에 알림이 떠요 · 4초 후 사라지거나 X로 닫을 수 있어요</div>
+              </div>
+            </section>
+
+            {/* Modal */}
+            <section>
+              <div className="stitle">Modal · 대화상자</div>
+              <div className="panel">
+                <div className="row">
+                  <button className="btn" onClick={() => setModal('confirm')}>확인 모달</button>
+                  <button className="btn" onClick={() => setModal('form')}>폼 모달</button>
+                  <button className="btn btn-danger" onClick={() => setModal('danger')}>삭제 확인</button>
+                </div>
+              </div>
+
+              <FModal open={modal === 'confirm'} onClose={() => setModal(null)} title="정말 저장할까요?"
+                footer={<>
+                  <button className="btn" onClick={() => setModal(null)}>취소</button>
+                  <button className="btn btn-primary" onClick={() => { setModal(null); msgApi.success('저장했어요'); }}>저장</button>
+                </>}>
+                변경 사항을 저장하면 이전 내용으로 되돌릴 수 없어요. 계속 진행할게요?
+              </FModal>
+
+              <FModal open={modal === 'form'} onClose={() => setModal(null)} title="새 프로젝트 만들기" width={520}
+                footer={<>
+                  <button className="btn" onClick={() => setModal(null)}>취소</button>
+                  <button className="btn btn-primary" onClick={() => { setModal(null); msgApi.success('프로젝트를 만들었어요'); }}>만들기</button>
+                </>}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div>
+                    <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--fg-2)', display: 'block', marginBottom: 6 }}>프로젝트 이름</label>
+                    <input defaultValue="My Project" style={{ width: '100%', height: 40, padding: '0 12px', borderRadius: 10, border: '1px solid var(--border-2)', fontFamily: 'var(--font-sans)', fontSize: 14, boxSizing: 'border-box', outline: 'none' }}/>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 13, fontWeight: 500, color: 'var(--fg-2)', display: 'block', marginBottom: 6 }}>설명 (선택)</label>
+                    <textarea rows={3} style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid var(--border-2)', fontFamily: 'var(--font-sans)', fontSize: 14, resize: 'none', boxSizing: 'border-box', outline: 'none' }}/>
+                  </div>
+                </div>
+              </FModal>
+
+              <FModal open={modal === 'danger'} onClose={() => setModal(null)} title="프로젝트를 삭제할까요?" danger
+                footer={<>
+                  <button className="btn" onClick={() => setModal(null)}>취소</button>
+                  <button className="btn btn-danger" style={{ background: '#EF4444', color: '#fff', borderColor: 'transparent' }} onClick={() => { setModal(null); msgApi.error('삭제했어요'); }}>삭제</button>
+                </>}>
+                이 작업은 되돌릴 수 없어요. <strong>Train Reservation</strong> 프로젝트와 관련된 모든 데이터가 영구적으로 지워져요.
+              </FModal>
+            </section>
+
+            {/* Drawer */}
+            <section>
+              <div className="stitle">Drawer · 슬라이드 패널</div>
+              <div className="panel">
+                <div className="row">
+                  <button className="btn" onClick={() => setDrawer('right')}>오른쪽</button>
+                  <button className="btn" onClick={() => setDrawer('left')}>왼쪽</button>
+                  <button className="btn" onClick={() => setDrawer('bottom')}>아래</button>
+                </div>
+              </div>
+              <FDrawer open={drawer === 'right'} onClose={() => setDrawer(null)} title="설정" placement="right">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>알림</div>
+                    <div style={{ fontSize: 13, color: 'var(--fg-2)' }}>새 댓글, 배포 완료 시 알림을 받을 수 있어요.</div>
+                  </div>
+                  <div style={{ height: 1, background: 'var(--border-1)' }}/>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>테마</div>
+                    <div style={{ fontSize: 13, color: 'var(--fg-2)' }}>현재 라이트 모드예요. 다크 모드는 준비 중이에요.</div>
+                  </div>
+                </div>
+              </FDrawer>
+              <FDrawer open={drawer === 'left'} onClose={() => setDrawer(null)} title="메뉴" placement="left">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {['Home','Projects','Writing','About'].map(l => (
+                    <button key={l} style={{ height: 40, padding: '0 12px', borderRadius: 8, border: 'none', background: 'transparent', fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500, cursor: 'pointer', textAlign: 'left', color: 'var(--fg-1)' }}>{l}</button>
+                  ))}
+                </div>
+              </FDrawer>
+              <FDrawer open={drawer === 'bottom'} onClose={() => setDrawer(null)} title="공유" placement="bottom">
+                <div style={{ fontSize: 14, color: 'var(--fg-2)' }}>공유 옵션을 여기에 넣을 수 있어요.</div>
+              </FDrawer>
+            </section>
+
+            {/* Result */}
+            <section>
+              <div className="stitle">Result · 결과 화면</div>
+              <div className="grid-2">
+                <div style={{ border: '1px solid var(--border-1)', borderRadius: 12, overflow: 'hidden', background: 'var(--bg-1)' }}>
+                  <FResult
+                    status="success"
+                    title="배포가 완료됐어요"
+                    description="main 브랜치가 Vercel에 정상적으로 올라갔어요. 변경 사항이 곧 반영될 거예요."
+                    extra={<>
+                      <button className="btn btn-primary">사이트 보기</button>
+                      <button className="btn">대시보드로</button>
+                    </>}
+                  />
+                </div>
+                <div style={{ border: '1px solid var(--border-1)', borderRadius: 12, overflow: 'hidden', background: 'var(--bg-1)' }}>
+                  <FResult
+                    status="error"
+                    title="빌드에 실패했어요"
+                    description="TypeScript 타입 오류가 있어요. 로그를 확인하고 다시 시도해 주세요."
+                    extra={<>
+                      <button className="btn btn-primary">로그 보기</button>
+                      <button className="btn">다시 시도</button>
+                    </>}
+                  />
+                </div>
+              </div>
+            </section>
+          </main>
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>

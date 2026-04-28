@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>General · 코리안심슨</title>
+  <link rel="stylesheet" href="../../colors_and_type.css">
+  <style>
+    body { margin: 0; background: var(--bg-2); }
+    main { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
+    h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
+    .lead { color: var(--fg-2); font-size: 15px; margin: 0 0 40px; }
+    section { margin-bottom: 56px; }
+    .stitle { font-size: 12px; color: var(--fg-3); letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 14px; font-weight: 600; }
+    .panel { background: var(--bg-1); border: 1px solid var(--border-1); border-radius: 12px; padding: 24px; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .swatch { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border-1); }
+    .ic-label { font-size: 10px; color: var(--fg-3); margin-top: 6px; text-align: center; font-family: var(--font-mono); }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+// General.jsx — Button (extended), Icon system, Typography
+const GN = {
+  fg1: 'var(--fg-1)', fg2: 'var(--fg-2)', fg3: 'var(--fg-3)',
+  bg1: 'var(--bg-1)', bg2: 'var(--bg-2)',
+  border1: 'var(--border-1)', border2: 'var(--border-2)',
+  primary: 'var(--primary-500)', primary600: 'var(--primary-600)',
+};
+
+// ---- Icon primitives (inline SVG paths, no CDN) ----
+const ICON_PATHS = {
+  home:        <><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></>,
+  search:      <><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>,
+  settings:    <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></>,
+  user:        <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>,
+  bell:        <><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></>,
+  mail:        <><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></>,
+  heart:       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>,
+  star:        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>,
+  'arrow-right': <><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></>,
+  check:       <polyline points="20 6 9 17 4 12"/>,
+  x:           <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>,
+  plus:        <><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>,
+  minus:       <line x1="5" y1="12" x2="19" y2="12"/>,
+  edit:        <><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></>,
+  trash:       <><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></>,
+  download:    <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>,
+  upload:      <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></>,
+  share:       <><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></>,
+  link:        <><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></>,
+  copy:        <><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></>,
+  eye:         <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>,
+  'eye-off':   <><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></>,
+  calendar:    <><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>,
+  clock:       <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>,
+  filter:      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>,
+  'sort-asc':  <><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="15" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></>,
+  'chevron-down': <polyline points="6 9 12 15 18 9"/>,
+  'chevron-right': <polyline points="9 18 15 12 9 6"/>,
+  'more-horizontal': <><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></>,
+  'more-vertical': <><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></>,
+  'log-out':   <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></>,
+  github:      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>,
+};
+
+function Icon({ name, size=24, color, strokeWidth=1.75 }) {
+  const d = ICON_PATHS[name];
+  if (!d) return <span style={{ display: 'inline-block', width: size, height: size, background: 'var(--gray-200)', borderRadius: 4 }}/>;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color || 'currentColor'} strokeWidth={strokeWidth}
+      strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+      {d}
+    </svg>
+  );
+}
+
+// ---- Button (full-featured) ----
+function Btn({
+  variant='primary', size='md', children, onClick, disabled,
+  loading=false, icon, iconRight, block, shape,
+}) {
+  const [hover, setHover] = React.useState(false);
+  const [active, setActive] = React.useState(false);
+
+  const sizeMap = {
+    xs: { h: 28, px: 10, fs: 12, radius: 8, iconSz: 13 },
+    sm: { h: 36, px: 14, fs: 13, radius: 10, iconSz: 15 },
+    md: { h: 44, px: 18, fs: 15, radius: 12, iconSz: 17 },
+    lg: { h: 52, px: 24, fs: 16, radius: 14, iconSz: 20 },
+  };
+  const sz = sizeMap[size] || sizeMap.md;
+
+  const variantStyles = {
+    primary:   { bg: '#F59E0B', hbg: '#D97706', color: '#fff', border: 'transparent' },
+    secondary: { bg: '#fff', hbg: '#F4F4F5', color: 'var(--fg-1)', border: 'var(--border-2)' },
+    ghost:     { bg: 'transparent', hbg: '#F4F4F5', color: 'var(--fg-1)', border: 'transparent' },
+    danger:    { bg: '#fff', hbg: '#FEF2F2', color: '#EF4444', border: '#FCA5A5' },
+    link:      { bg: 'transparent', hbg: 'transparent', color: '#D97706', border: 'transparent' },
+  };
+  const vs = variantStyles[variant] || variantStyles.primary;
+
+  const isIconOnly = !children && (icon || loading);
+  const filterInvert = (variant === 'primary') ? 'brightness(0) invert(1)' : undefined;
+
+  return (
+    <button
+      onClick={onClick} disabled={disabled || loading}
+      onMouseEnter={() => setHover(true)} onMouseLeave={() => { setHover(false); setActive(false); }}
+      onMouseDown={() => setActive(true)} onMouseUp={() => setActive(false)}
+      style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        gap: sz.iconSz * 0.4,
+        height: sz.h,
+        width: isIconOnly ? sz.h : (block ? '100%' : 'auto'),
+        padding: isIconOnly ? 0 : `0 ${sz.px}px`,
+        borderRadius: shape === 'circle' ? 999 : sz.radius,
+        border: `1px solid ${vs.border}`,
+        background: hover ? vs.hbg : vs.bg,
+        color: vs.color,
+        fontFamily: 'var(--font-sans)', fontSize: sz.fs, fontWeight: 600,
+        cursor: (disabled || loading) ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.45 : 1,
+        transform: active && !disabled ? 'scale(0.98)' : 'none',
+        transition: 'all 150ms cubic-bezier(.22,1,.36,1)',
+        textDecoration: variant === 'link' ? (hover ? 'underline' : 'none') : 'none',
+        userSelect: 'none', whiteSpace: 'nowrap',
+      }}>
+      {loading
+        ? <svg width={sz.iconSz} height={sz.iconSz} viewBox="0 0 24 24" style={{ animation: 'gn-spin .7s linear infinite', flexShrink: 0 }}>
+            <style>{`@keyframes gn-spin{to{transform:rotate(360deg)}}`}</style>
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2.5" strokeDasharray="42" strokeDashoffset="14" strokeLinecap="round"/>
+          </svg>
+        : icon && <Icon name={icon} size={sz.iconSz} color={vs.color}/>}
+      {children && <span>{children}</span>}
+      {iconRight && !loading && <Icon name={iconRight} size={sz.iconSz} color={vs.color}/>}
+    </button>
+  );
+}
+
+// ---- ButtonGroup ----
+function ButtonGroup({ children }) {
+  return (
+    <div style={{ display: 'inline-flex' }}>
+      {React.Children.map(children, (child, i) => {
+        if (!child) return null;
+        const first = i === 0, last = i === React.Children.count(children) - 1;
+        return React.cloneElement(child, {
+          style: {
+            ...(child.props.style || {}),
+            borderRadius: first ? '12px 0 0 12px' : last ? '0 12px 12px 0' : 0,
+            marginLeft: first ? 0 : -1,
+          }
+        });
+      })}
+    </div>
+  );
+}
+
+// ---- Typography ----
+function Typo({ children }) { return children; }
+
+Typo.Display = ({ children, style }) => (
+  <div style={{ fontSize: 40, lineHeight: 1.25, fontWeight: 700, letterSpacing: '-0.02em', ...style }}>{children}</div>
+);
+Typo.H1 = ({ children, style }) => (
+  <h1 style={{ fontSize: 32, lineHeight: 1.3, fontWeight: 700, letterSpacing: '-0.02em', margin: 0, ...style }}>{children}</h1>
+);
+Typo.H2 = ({ children, style }) => (
+  <h2 style={{ fontSize: 24, lineHeight: 1.4, fontWeight: 600, letterSpacing: '-0.01em', margin: 0, ...style }}>{children}</h2>
+);
+Typo.H3 = ({ children, style }) => (
+  <h3 style={{ fontSize: 20, lineHeight: 1.45, fontWeight: 600, letterSpacing: '-0.01em', margin: 0, ...style }}>{children}</h3>
+);
+Typo.Body = ({ children, style }) => (
+  <p style={{ fontSize: 16, lineHeight: 1.6, fontWeight: 400, margin: 0, ...style }}>{children}</p>
+);
+Typo.Small = ({ children, style }) => (
+  <span style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--fg-3)', ...style }}>{children}</span>
+);
+Typo.Code = ({ children, block, style }) => {
+  const s = {
+    fontFamily: 'var(--font-mono)', fontSize: block ? 13 : '0.9em',
+    background: 'var(--gray-100)', color: 'var(--fg-1)',
+    borderRadius: block ? 10 : 5,
+    padding: block ? '14px 18px' : '2px 6px',
+    display: block ? 'block' : 'inline',
+    lineHeight: block ? 1.7 : 1.5,
+    border: '1px solid var(--border-1)',
+    ...style,
+  };
+  return block ? <pre style={s}>{children}</pre> : <code style={s}>{children}</code>;
+};
+Typo.Numeric = ({ children, style }) => (
+  <span style={{ fontFamily: 'Inter', fontFeatureSettings: '"tnum" 1, "cv11" 1', ...style }}>{children}</span>
+);
+Typo.Mark = ({ children, color }) => (
+  <mark style={{ background: color || 'var(--primary-200)', color: 'var(--primary-800)', borderRadius: 3, padding: '0 3px' }}>{children}</mark>
+);
+
+Object.assign(window, { GIcon: Icon, ICON_PATHS, GBtn: Btn, GButtonGroup: ButtonGroup, GTypo: Typo });
+
+</script>
+  <script type="text/babel">
+    const ICON_NAMES = Object.keys(ICON_PATHS);
+
+    function App() {
+      const [loadingBtn, setLoadingBtn] = React.useState(false);
+
+      const handleLoad = () => {
+        setLoadingBtn(true);
+        setTimeout(() => setLoadingBtn(false), 2000);
+      };
+
+      return (
+        <main>
+          <h1>General</h1>
+          <p className="lead">버튼, 아이콘, 타이포그래피 — UI의 가장 기본이 되는 요소들이에요.</p>
+
+          {/* ---- Button: Variants ---- */}
+          <section>
+            <div className="stitle">Button · 종류</div>
+            <div className="panel">
+              <div className="row" style={{ marginBottom: 16 }}>
+                <GBtn variant="primary">저장</GBtn>
+                <GBtn variant="secondary">취소</GBtn>
+                <GBtn variant="ghost">나중에</GBtn>
+                <GBtn variant="danger">삭제</GBtn>
+                <GBtn variant="link">더 보기</GBtn>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--fg-3)', borderTop: '1px solid var(--border-1)', paddingTop: 14 }}>
+                한 화면에 Primary는 하나만. Secondary·Ghost는 여러 개 가능. Danger는 파괴적 액션 전용.
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Button: Sizes ---- */}
+          <section>
+            <div className="stitle">Button · 크기</div>
+            <div className="panel">
+              <div className="row" style={{ alignItems: 'flex-end' }}>
+                <GBtn variant="primary" size="xs">xs · 28</GBtn>
+                <GBtn variant="primary" size="sm">sm · 36</GBtn>
+                <GBtn variant="primary" size="md">md · 44</GBtn>
+                <GBtn variant="primary" size="lg">lg · 52</GBtn>
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Button: States ---- */}
+          <section>
+            <div className="stitle">Button · 상태</div>
+            <div className="panel">
+              <div className="row" style={{ marginBottom: 12 }}>
+                <GBtn variant="primary">기본</GBtn>
+                <GBtn variant="primary" loading={loadingBtn} onClick={handleLoad}>
+                  {loadingBtn ? '저장 중…' : '클릭해서 로딩'}
+                </GBtn>
+                <GBtn variant="primary" disabled>비활성</GBtn>
+              </div>
+              <div className="row">
+                <GBtn variant="secondary" icon="plus">새로 만들기</GBtn>
+                <GBtn variant="secondary" icon="download" iconRight="arrow-right">내보내기</GBtn>
+                <GBtn variant="ghost" icon="edit" size="sm"/>
+                <GBtn variant="ghost" icon="trash" size="sm"/>
+                <GBtn variant="primary" icon="check" shape="circle" size="md"/>
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Button: Block & Group ---- */}
+          <section>
+            <div className="stitle">Button · Block / Group</div>
+            <div className="grid-2">
+              <div className="panel">
+                <GBtn variant="primary" block>전체 너비 버튼</GBtn>
+                <div style={{ marginTop: 10 }}><GBtn variant="secondary" block>전체 너비 Secondary</GBtn></div>
+              </div>
+              <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'inline-flex' }}>
+                  <GBtn variant="secondary" style={{ borderRadius: '12px 0 0 12px', marginRight: -1 }}>일별</GBtn>
+                  <GBtn variant="secondary" style={{ borderRadius: 0, marginRight: -1 }}>주별</GBtn>
+                  <GBtn variant="primary" style={{ borderRadius: '0 12px 12px 0' }}>월별</GBtn>
+                </div>
+                <div style={{ display: 'inline-flex' }}>
+                  <GBtn variant="ghost" icon="chevron-down" size="sm" style={{ borderRadius: '8px 0 0 8px', marginRight: -1 }}>옵션</GBtn>
+                  <GBtn variant="secondary" icon="more-vertical" size="sm" style={{ borderRadius: '0 8px 8px 0', width: 36, padding: 0 }}/>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Icon catalog ---- */}
+          <section>
+            <div className="stitle">Icon · 전체 목록 ({ICON_NAMES.length}개)</div>
+            <div className="panel">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', gap: 8 }}>
+                {ICON_NAMES.map(name => (
+                  <div key={name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 4px', borderRadius: 8, cursor: 'default' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--gray-100)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                    <GIcon name={name} size={22} color="var(--fg-2)"/>
+                    <div className="ic-label">{name}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--border-1)', fontSize: 12, color: 'var(--fg-3)' }}>
+                Lucide 기반 · stroke 1.75 · outline only · 24×24 viewBox · <code style={{ fontFamily: 'var(--font-mono)', background: 'var(--gray-100)', padding: '1px 5px', borderRadius: 4 }}>currentColor</code> 상속
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Icon: sizes & weights ---- */}
+          <section>
+            <div className="stitle">Icon · 크기 / 두께</div>
+            <div className="panel">
+              <div className="row" style={{ gap: 20, marginBottom: 16 }}>
+                {[14, 18, 22, 28, 36, 48].map(sz => (
+                  <div key={sz} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <GIcon name="star" size={sz}/>
+                    <div className="ic-label">{sz}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="row" style={{ gap: 20 }}>
+                {[1, 1.5, 1.75, 2, 2.5].map(sw => (
+                  <div key={sw} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <GIcon name="home" size={28} strokeWidth={sw}/>
+                    <div className="ic-label">sw {sw}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 14, fontSize: 12, color: 'var(--fg-3)' }}>
+                시스템 기본 strokeWidth는 <strong>1.75</strong>. 24×24 이상일 땐 1.5도 자연스러워요.
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Icon: colors ---- */}
+          <section>
+            <div className="stitle">Icon · 색상</div>
+            <div className="panel">
+              <div className="row" style={{ gap: 20 }}>
+                {[
+                  { color: 'var(--fg-1)', label: 'fg-1' },
+                  { color: 'var(--fg-2)', label: 'fg-2' },
+                  { color: 'var(--fg-3)', label: 'fg-3' },
+                  { color: '#F59E0B', label: 'primary' },
+                  { color: '#10B981', label: 'success' },
+                  { color: '#EF4444', label: 'error' },
+                  { color: '#6366F1', label: 'info' },
+                ].map(({ color, label }) => (
+                  <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <GIcon name="heart" size={26} color={color}/>
+                    <div className="ic-label">{label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Typography ---- */}
+          <section>
+            <div className="stitle">Typography · 위계</div>
+            <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>Display · 40 / 700 / -0.02em</div>
+                <GTypo.Display>한 화면, 한 액션</GTypo.Display>
+              </div>
+              <div style={{ height: 1, background: 'var(--border-1)' }}/>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>H1 · 32 / 700 / -0.02em</div>
+                <GTypo.H1>에러는 책망이 아닌 안내예요</GTypo.H1>
+              </div>
+              <div style={{ height: 1, background: 'var(--border-1)' }}/>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>H2 · 24 / 600 / -0.01em</div>
+                <GTypo.H2>마리골드가 브랜드 컬러인 이유</GTypo.H2>
+              </div>
+              <div style={{ height: 1, background: 'var(--border-1)' }}/>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>H3 · 20 / 600 / -0.01em</div>
+                <GTypo.H3>Pretendard와 Inter를 함께 쓰는 방법</GTypo.H3>
+              </div>
+              <div style={{ height: 1, background: 'var(--border-1)' }}/>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>Body · 16 / 400 / 1.6</div>
+                <GTypo.Body>사용자를 친구처럼 대하되 가볍지 않게. 부정형보다 긍정형으로, 전문 용어는 일상어로 풀어써요. <GTypo.Mark>핵심 정보</GTypo.Mark>는 마크로 강조할 수 있어요.</GTypo.Body>
+              </div>
+              <div style={{ height: 1, background: 'var(--border-1)' }}/>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>Small · 13 / 400 / fg-3</div>
+                <GTypo.Small>메타 정보, 도움말, 라벨. 본문보다 한 단계 작고 흐려요.</GTypo.Small>
+              </div>
+            </div>
+          </section>
+
+          {/* ---- Typography: code & numeric ---- */}
+          <section>
+            <div className="stitle">Typography · 코드 / 숫자</div>
+            <div className="panel" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', marginBottom: 6 }}>Inline Code</div>
+                <GTypo.Body>컴포넌트 import 시 <GTypo.Code>{'import { GBtn } from "./General"'}</GTypo.Code>를 사용하세요.</GTypo.Body>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', marginBottom: 6 }}>Block Code · Geist Mono</div>
+                <GTypo.Code block>{`const token = {
+  primary: '#F59E0B',
+  font: 'Pretendard Variable',
+  radius: { sm: 8, md: 12, lg: 16 },
+};`}</GTypo.Code>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: 'var(--fg-3)', fontFamily: 'var(--font-mono)', marginBottom: 6 }}>Numeric · Inter + tabular nums</div>
+                <div style={{ display: 'flex', gap: 32 }}>
+                  <GTypo.Numeric style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em' }}>12,847</GTypo.Numeric>
+                  <GTypo.Numeric style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em' }}>0.0042</GTypo.Numeric>
+                  <GTypo.Numeric style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em', color: '#10B981' }}>+8.3%</GTypo.Numeric>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>

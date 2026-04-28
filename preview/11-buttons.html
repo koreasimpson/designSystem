@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<style>
+  .btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 18px;border-radius:12px;font-family:var(--font-sans);font-size:15px;font-weight:600;border:1px solid transparent;cursor:pointer;transition:all 200ms cubic-bezier(.22,1,.36,1)}
+  .btn--primary{background:var(--primary-500);color:#fff}
+  .btn--primary:hover{background:var(--primary-600)}
+  .btn--secondary{background:var(--bg-1);color:var(--fg-1);border-color:var(--border-2)}
+  .btn--secondary:hover{background:var(--gray-100)}
+  .btn--ghost{background:transparent;color:var(--fg-1)}
+  .btn--ghost:hover{background:var(--gray-100)}
+  .btn--danger{background:var(--bg-1);color:#EF4444;border-color:#FCA5A5}
+  .btn--danger:hover{background:#FEF2F2}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+</style>
+</head>
+<body><div class="card">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <button class="btn btn--primary">저장</button>
+    <button class="btn btn--secondary">취소</button>
+    <button class="btn btn--ghost">나중에</button>
+    <button class="btn btn--danger">삭제</button>
+    <button class="btn btn--primary" disabled>비활성</button>
+  </div>
+  <div class="caption" style="margin-top:14px">Primary 1개 / Secondary·Ghost 다수 가능 / Danger는 outline only</div>
+</div></body></html>
