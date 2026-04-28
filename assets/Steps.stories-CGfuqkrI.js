@@ -1,0 +1,17 @@
+import{j as t}from"./jsx-runtime-CFY_2KVU.js";import"./index-Dq4ZvVuH.js";import"./_commonjsHelpers-CqkleIqs.js";const b="_root_1az0o_1",q="_horizontal_1az0o_5",w="_vertical_1az0o_10",I="_step_1az0o_16",B="_marker_1az0o_24",E="_connector_1az0o_31",V="_content_1az0o_37",C="_dot_1az0o_67",H="_active_1az0o_81",L="_done_1az0o_86",M="_number_1az0o_95",A="_title_1az0o_105",O="_description_1az0o_117",e={root:b,horizontal:q,vertical:w,step:I,marker:B,connector:E,content:V,dot:C,active:H,done:L,number:M,title:A,description:O},i=({current:l,items:d,direction:y="horizontal",className:k})=>t.jsx("div",{className:[e.root,y==="vertical"?e.vertical:e.horizontal,k].filter(Boolean).join(" "),children:d.map((c,r)=>{const p=r<l,T=r===l;return t.jsxs("div",{className:[e.step,p?e.done:"",T?e.active:""].filter(Boolean).join(" "),children:[t.jsxs("div",{className:e.marker,children:[t.jsx("div",{className:e.dot,children:p?t.jsx("svg",{width:"12",height:"12",viewBox:"0 0 24 24",fill:"none",stroke:"#fff",strokeWidth:"3.5",strokeLinecap:"round",strokeLinejoin:"round",children:t.jsx("path",{d:"M20 6 9 17l-5-5"})}):t.jsx("span",{className:e.number,children:r+1})}),r<d.length-1&&t.jsx("div",{className:e.connector})]}),t.jsxs("div",{className:e.content,children:[t.jsx("div",{className:e.title,children:c.title}),c.description&&t.jsx("div",{className:e.description,children:c.description})]})]},r)})});i.displayName="Steps";i.__docgenInfo={description:"",methods:[],displayName:"Steps",props:{current:{required:!0,tsType:{name:"number"},description:""},items:{required:!0,tsType:{name:"Array",elements:[{name:"StepItem"}],raw:"StepItem[]"},description:""},direction:{required:!1,tsType:{name:"union",raw:"'horizontal' | 'vertical'",elements:[{name:"literal",value:"'horizontal'"},{name:"literal",value:"'vertical'"}]},description:"",defaultValue:{value:"'horizontal'",computed:!1}},className:{required:!1,tsType:{name:"string"},description:""}}};const R=[{title:"계정 생성",description:"이메일과 비밀번호를 입력해요."},{title:"프로필 설정",description:"이름과 사진을 추가해요."},{title:"구독 선택",description:"플랜을 선택해요."},{title:"완료"}],G={title:"Navigation/Steps",component:i,tags:["autodocs"],args:{current:1,items:R},argTypes:{current:{control:"range",min:0,max:3,step:1},direction:{control:"select",options:["horizontal","vertical"]}}},o={args:{direction:"horizontal"}},s={args:{direction:"vertical"}},n={args:{current:0}},a={args:{current:4}};var m,u,_;o.parameters={...o.parameters,docs:{...(m=o.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  args: {
+    direction: 'horizontal'
+  }
+}`,...(_=(u=o.parameters)==null?void 0:u.docs)==null?void 0:_.source}}};var v,h,z;s.parameters={...s.parameters,docs:{...(v=s.parameters)==null?void 0:v.docs,source:{originalSource:`{
+  args: {
+    direction: 'vertical'
+  }
+}`,...(z=(h=s.parameters)==null?void 0:h.docs)==null?void 0:z.source}}};var g,x,j;n.parameters={...n.parameters,docs:{...(g=n.parameters)==null?void 0:g.docs,source:{originalSource:`{
+  args: {
+    current: 0
+  }
+}`,...(j=(x=n.parameters)==null?void 0:x.docs)==null?void 0:j.source}}};var f,N,S;a.parameters={...a.parameters,docs:{...(f=a.parameters)==null?void 0:f.docs,source:{originalSource:`{
+  args: {
+    current: 4
+  }
+}`,...(S=(N=a.parameters)==null?void 0:N.docs)==null?void 0:S.source}}};const J=["Horizontal","Vertical","Start","Complete"];export{a as Complete,o as Horizontal,n as Start,s as Vertical,J as __namedExportsOrder,G as default};
